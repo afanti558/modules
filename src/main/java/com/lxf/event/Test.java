@@ -1,5 +1,7 @@
 package com.lxf.event;
 
+import java.util.EventObject;
+
 /**
  * 事件监听测试
  */

@@ -39,8 +39,7 @@ public class Student {
 
 	@Override
 	public String toString() {
-		return "Student [studentNo=" + studentNo + ", studentName="
-				+ studentName + "]";
+		return "Student [学生编号=" + studentNo + ", 学生姓名="	+ studentName + "]";
 	}
 	
 }
