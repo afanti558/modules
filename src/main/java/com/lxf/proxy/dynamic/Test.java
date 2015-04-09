@@ -17,5 +17,6 @@ public class Test {
 
     //通过动态代理调用方法
         iDemoProxy.say("参数");
+
     }
 }
