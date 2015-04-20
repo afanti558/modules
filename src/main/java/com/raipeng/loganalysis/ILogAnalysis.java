@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface ILogAnalysis {
 
-    void modu_visitNum(LogData logData, String analysiskey, String starttime, String endtime, Map<String, String> map) throws ParseException;
+    void statistic(LogData logData, String analysiskey, String starttime, String endtime, Map<String, String> map) throws ParseException;
 
 }

@@ -2,7 +2,10 @@ package com.raipeng.io;
 
 import com.raipeng.iptimestamp.IpTimeStamp;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -30,11 +33,12 @@ public class IO {
 
     /**
      * 拉取网络资源并本地保存
-     * @param strUrl 网络资源路径
+     *
+     * @param strUrl   网络资源路径
      * @param savePath 保存本地路径
      * @return true/false
      */
-    public static Boolean getMediaFile(String strUrl,String savePath) {
+    public static Boolean getMediaFile(String strUrl, String savePath) {
         boolean flag = false;
         File file = new File(savePath);
         if (!file.exists()) {
@@ -71,10 +75,11 @@ public class IO {
 
     /**
      * 获取网络上的资源返回不带换行空格的字节码字符串
-     * @param strUrl  网络资源路径
+     *
+     * @param strUrl 网络资源路径
      * @return 资源的字节码字符串
      */
-    public static String getMediaFile(String strUrl){
+    public static String getMediaFile(String strUrl) {
         StringBuffer sb = new StringBuffer();
         try {
             URL url = new URL(strUrl);
@@ -87,7 +92,7 @@ public class IO {
             byte[] bytes = new byte[8096];
             int size;
             while ((size = bis.read(bytes)) != -1)
-                sb.append(new String(bytes, 0, size,"GBK"));
+                sb.append(new String(bytes, 0, size, "GBK"));
             bis.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,10 +101,9 @@ public class IO {
     }
 
 
-
-
     /**
      * 根据内容类型判断文件扩展名
+     *
      * @param contentType 内容类型
      * @return 文件后缀名
      */
@@ -113,7 +117,7 @@ public class IO {
             fileExt = ".amr";
         else if ("video/mp4".equals(contentType) || "video/mpeg4".equals(contentType))
             fileExt = ".mp4";
-        else if("text/x-vcard".equals(contentType)){
+        else if ("text/x-vcard".equals(contentType)) {
             fileExt = ".vcf";
         }
         return fileExt;
@@ -121,10 +125,11 @@ public class IO {
 
     /**
      * 将字符串中的空格换行等去掉
+     *
      * @param str 需要处理的字符串
      * @return 处理之后的字符串
      */
-    public static String changeString(String str){
+    public static String changeString(String str) {
         Pattern p = Pattern.compile("\\s*|\t|\r|\n");
         Matcher m = p.matcher(str);
         str = m.replaceAll("");
@@ -134,68 +139,63 @@ public class IO {
 
     /**
      * 判断文件编码格式
+     *
      * @param file
      * @return
      */
-    public static String get_charset( File file ) {
+    public static String get_charset(File file) {
         String charset = "GBK";
         byte[] first3Bytes = new byte[3];
         try {
             boolean checked = false;
-            BufferedInputStream bis = new BufferedInputStream( new FileInputStream( file ) );
-            bis.mark( 0 );
-            int read = bis.read( first3Bytes, 0, 3 );
-            if ( read == -1 ) return charset;
-            if ( first3Bytes[0] == (byte) 0xFF && first3Bytes[1] == (byte) 0xFE ) {
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            bis.mark(0);
+            int read = bis.read(first3Bytes, 0, 3);
+            if (read == -1) return charset;
+            if (first3Bytes[0] == (byte) 0xFF && first3Bytes[1] == (byte) 0xFE) {
                 charset = "UTF-16LE";
                 checked = true;
-            }
-            else if ( first3Bytes[0] == (byte) 0xFE && first3Bytes[1] == (byte) 0xFF ) {
+            } else if (first3Bytes[0] == (byte) 0xFE && first3Bytes[1] == (byte) 0xFF) {
                 charset = "UTF-16BE";
                 checked = true;
-            }
-            else if ( first3Bytes[0] == (byte) 0xEF && first3Bytes[1] == (byte) 0xBB && first3Bytes[2] == (byte) 0xBF ) {
+            } else if (first3Bytes[0] == (byte) 0xEF && first3Bytes[1] == (byte) 0xBB && first3Bytes[2] == (byte) 0xBF) {
                 charset = "UTF-8";
                 checked = true;
             }
             bis.reset();
-            if ( !checked ) {
+            if (!checked) {
                 //	int len = 0;
                 int loc = 0;
-                while ( (read = bis.read()) != -1 ) {
+                while ((read = bis.read()) != -1) {
                     loc++;
-                    if ( read >= 0xF0 ) break;
-                    if ( 0x80 <= read && read <= 0xBF ) // 单独出现BF以下的，也算是GBK
+                    if (read >= 0xF0) break;
+                    if (0x80 <= read && read <= 0xBF) // 单独出现BF以下的，也算是GBK
                         break;
-                    if ( 0xC0 <= read && read <= 0xDF ) {
+                    if (0xC0 <= read && read <= 0xDF) {
                         read = bis.read();
-                        if ( 0x80 <= read && read <= 0xBF ) // 双字节 (0xC0 - 0xDF) (0x80
+                        if (0x80 <= read && read <= 0xBF) // 双字节 (0xC0 - 0xDF) (0x80
                             // - 0xBF),也可能在GB编码内
                             continue;
                         else break;
-                    }
-                    else if ( 0xE0 <= read && read <= 0xEF ) {// 也有可能出错，但是几率较小
+                    } else if (0xE0 <= read && read <= 0xEF) {// 也有可能出错，但是几率较小
                         read = bis.read();
-                        if ( 0x80 <= read && read <= 0xBF ) {
+                        if (0x80 <= read && read <= 0xBF) {
                             read = bis.read();
-                            if ( 0x80 <= read && read <= 0xBF ) {
+                            if (0x80 <= read && read <= 0xBF) {
                                 charset = "UTF-8";
                                 break;
-                            }
-                            else break;
-                        }
-                        else break;
+                            } else break;
+                        } else break;
                     }
                 }
                 //System.out.println( loc + " " + Integer.toHexString( read ) );
             }
 
             bis.close();
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return charset;
     }
-
 
 }

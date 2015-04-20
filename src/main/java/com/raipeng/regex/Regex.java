@@ -12,7 +12,7 @@ public class Regex {
 	public static String regexText(String str){
 		String regex1 = "<img.*?/>";
 		//.匹配除“\r\n”之外的任何单个字符,匹配前面的子表达式零次或多次(大于等于0次)
-        //*当该字符紧跟在任何一个其他限制符（*,+,?，{n}，{n,}，{n,m}）后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，
+        //？当该字符紧跟在任何一个其他限制符（*,+,?，{n}，{n,}，{n,m}）后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，
             // 而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串“oooo”，“o+?”将匹配单个“o”，而“o+”将匹配所有“o”。
 		Pattern pattern = Pattern.compile (regex1);
 		Matcher match = pattern.matcher (str);

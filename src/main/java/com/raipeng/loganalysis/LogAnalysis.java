@@ -17,7 +17,7 @@ class LogAnalysis extends LogAnalysisImpl {
      * @param endtime 统计结束时间
      */
     @Override
-	public void modu_visitNum(LogData logData, String analysiskey, String starttime, String endtime,Map<String,String> map) throws ParseException {
+	public void statistic(LogData logData, String analysiskey, String starttime, String endtime, Map<String, String> map) throws ParseException {
         String key = logData.getModuleKey();
         Date date = logData.getDatetime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -42,10 +42,10 @@ class LogAnalysis extends LogAnalysisImpl {
             Iterator<String> paramkeys = map.keySet().iterator();
             while(paramkeys.hasNext()){
             	String paramkey = paramkeys.next();
-            	if(!logData.getParams().containsKey(paramkey) || !logData.getParams().get(paramkey).equals(map.get(paramkey)))
-            		return;
+            	if(!logData.getParams().containsKey(paramkey) || !logData.getParams().get(paramkey).equals(map.get(paramkey))){
+                    return;
+                }
             }
-        	
         	visit++;
         }
     }

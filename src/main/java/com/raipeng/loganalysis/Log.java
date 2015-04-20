@@ -2,9 +2,14 @@ package com.raipeng.loganalysis;
 
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Log {
@@ -13,11 +18,14 @@ public class Log {
 
     @Test
     public void test() throws IOException, ParseException {
-        File f = readFile("mp.2015-04-10.log");
+        File[] f = readFile("2015-04-10","2015-04-11");
         Map<String,String> map = new HashMap<String,String>();
         map.put("options", "coco");
         map.put("industryId", "d2fc1c67fb57495b916ee8ad4526e426");
-        statistics(f, "shopping", "2010-04-10 14:00:00", "2015-04-10 14:00:00",map);
+        for (int i = 0; i <f.length ; i++) {
+            statistics(f[i], "shopping", "2010-04-10 14:00:00", "2015-04-10 14:00:00",map);
+        }
+
 
     }
 
@@ -28,36 +36,59 @@ public class Log {
      * @param endtime 开始统计日期，如果为null或""表示到统计时间
      */
     public void statistics(File file,String modulekey,String begintime,String endtime,Map<String,String> map) throws IOException, ParseException {
-        InputStream in = new FileInputStream(file);
-        InputStreamReader isr = new InputStreamReader(in, "UTF-8");
-        BufferedReader reader = new BufferedReader(isr);
+//        InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
+//        BufferedReader reader = new BufferedReader(isr);
+
+
+        BufferedReader reader = new BufferedReader(new FileReader(file),5*1024*1024);
+
+
+
         // 一次读入一行，直到读入null为文件结束
         String tempString = null;
         logAnalysis = new LogAnalysis() ;
         while ((tempString = reader.readLine()) != null) {
-        	if(!tempString.contains("::"))
-        		continue;
-        	System.out.println(tempString);
+        	if(!tempString.contains("::")){
+                continue;
+            }
+//        	System.out.println(tempString);
         	logData = new LogData(tempString);
-            logAnalysis.modu_visitNum(logData, modulekey, begintime, endtime,map);
+            logAnalysis.statistic(logData, modulekey, begintime, endtime, map);
         }
         logAnalysis.print();
     }
 
     //按照文件名称去读取文件
-    public File readFile(String fileName) {
+    public File[] readFile(String begin,String end) {
         File[] f = new File("d:\\").listFiles();
+        List<File> list = new ArrayList<File>();
         for (int i = 0; i < f.length; i++) {
-            if (fileName.equals(f[i].getName())) {
-                return f[i];
+            String name = f[i].getName();
+            if (name.matches("\\d{4}-\\d{2}-\\d{2}\\.log")) {
+
+                if (name.compareTo(begin+".log")>=0 && name.compareTo(end+".log")<=0) {
+                    list.add(new File("d:\\" + name));
+                }
             }
         }
-        return null;
+
+        File[] dest = list.toArray(new File[list.size()]);
+
+//        for (int i = 0; i < f.length; i++) {
+//            if (fileName.equals(f[i].getName())) {
+//                return f[i];
+//            }
+//        }
+        return dest;
     }
 
-    public static void main(String[] args) throws ParseException {
-
+    @Test
+    public void test2() {
+        String str = "2015-04-05";
+        String begin = "2015-04-03";
+        String end = "2015-04-05";
+        System.out.println("begin:" +str.compareTo(begin) );
+        System.out.println("end:" +str.compareTo(end) );
     }
-
 
 }
